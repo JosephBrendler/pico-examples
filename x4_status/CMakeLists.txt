@@ -1,0 +1,7 @@
+if (TARGET hardware_pwm)
+    add_subdirectory_exclude_platforms(pwm_status)
+    add_subdirectory_exclude_platforms(blink_status)
+    add_subdirectory_exclude_platforms(pwm_status_with_analog_io)
+else()
+    message("Skipping PWM examples as hardware_pwm is unavailable on this platform")
+endif()

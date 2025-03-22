@@ -5,6 +5,8 @@
  */
 
 
+#include <stdio.h>
+#include <stdlib.h>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "hardware/irq.h"
@@ -23,6 +25,9 @@
 #define UART_TX_PIN 0
 #define UART_RX_PIN 1
 
+#define CR 13   // ascii "\r"
+#define LF 10   // ascii "\n"
+
 static int chars_rxed = 0;
 
 // RX interrupt handler
@@ -31,9 +36,9 @@ void on_uart_rx() {
         uint8_t ch = uart_getc(UART_ID);
         // Can we send it back?
         if (uart_is_writable(UART_ID)) {
-            // Change it slightly first!
-            ch++;
-            uart_putc(UART_ID, ch);
+            uart_putc(UART_ID, ch);   // just echo it back
+            uart_putc(UART_ID, CR);   // carriage return
+            uart_putc(UART_ID, LF);   // line feed
         }
         chars_rxed++;
     }
@@ -77,10 +82,9 @@ int main() {
     // OK, all set up.
     // Lets send a basic string out, and then run a loop and wait for RX interrupts
     // The handler will count them, but also reflect the incoming data back with a slight change!
-    uart_puts(UART_ID, "\nHello, uart interrupts\n");
+    uart_puts(UART_ID, "\nHello, uart advanced\r\n");
 
-    while (1)
-        tight_loop_contents();
+    while (1) { tight_loop_contents(); }
 }
 
 /// \end:uart_advanced[]
